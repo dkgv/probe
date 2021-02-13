@@ -32,7 +32,7 @@ namespace Probe
                         queue.Enqueue(childEntry);
                     }
                 }
-                else
+                else if (Path.GetExtension(entry).Equals(".cs"))
                 {
                     var code = new Code
                     {
