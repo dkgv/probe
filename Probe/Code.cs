@@ -19,6 +19,8 @@ namespace Probe
             Lines = sb.ToString().Split("\n");
         }
 
+        public string FilePath { get; set; }
+
         public string[] Lines { get; set; }
 
         public string Join(CodeSegment segment)
@@ -33,11 +35,11 @@ namespace Probe
             return sb.ToString();
         }
 
-        public void Replace(int lineFrom, int lineTo, string replace)
+        public void Replace(int lineFrom, int lineTo, string[] replacements)
         {
-            for (var i = lineFrom; i < lineTo; i++)
+            for (int i = lineFrom, j = 0; i < lineTo; i++, j++)
             {
-                Lines[i] = replace;
+                Lines[i] = replacements[j];
             }
         }
 

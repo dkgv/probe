@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace Probe
 {
@@ -6,16 +8,18 @@ namespace Probe
     {
         static void Main(string[] args)
         {
-            var filePath = args[1];
-            var code = new Code
+            var rootDirectory = args[1];
+            if (!Directory.Exists(rootDirectory))
             {
-                Lines = File.ReadAllLines(filePath)
-            };
+                return;
+            }
 
             var dependencyExtractor = new CSharpDependencyExtractor();
             var methodExtractor = new CSharpMethodExtractor(new CSharpMethodDeclarationIdentifier());
-            var replacer = new SourceReplacer(dependencyExtractor, methodExtractor, new NotImplementedEmitStrategy());
-            
+            var replacer = new SourceReplacer(dependencyExtractor, methodExtractor, new RemovedCommentEmitStrategy());
+
+            var projectProcessor = new ProjectProcessor(replacer);
+            projectProcessor.Process(rootDirectory);
         }
     }
 }

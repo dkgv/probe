@@ -14,8 +14,9 @@ namespace Probe.Test
             _replacer = new SourceReplacer(dependencyExtractor, methodExtractor, new RemovedCommentEmitStrategy());
         }
 
-        [TestCase(TestConstants.TestMethodPrintBody, "Console.WriteLine(\"Test\");", "// removed")]
-        public void TestReplace(string source, string before, string after)
+        [TestCase(TestConstants.TestMethodPrintBody, "Console.WriteLine(\"Test\");", TestConstants.NotImplementedException)]
+        [TestCase(TestConstants.TestMethodWithNestedMethod, TestConstants.TestMethod, TestConstants.NotImplementedException)]
+        public void TestReplaceSingleMethod(string source, string before, string after)
         {
             var lines = source.Split("\n");
             var code = new Code
@@ -23,9 +24,23 @@ namespace Probe.Test
                 Lines = lines
             };
 
-            var @out = _replacer.Replace(code);
-            Assert.False(@out.GetContent().Contains(before));
-            Assert.True(@out.GetContent().Contains(after));
+            _replacer.Replace(code);
+            Assert.False(code.GetContent().Contains(before));
+            Assert.True(code.GetContent().Contains(after));
+        }
+
+        [Test]
+        public void TestReplaceClass()
+        {
+            var lines = TestConstants.TestClassWithSingleMethod.Split("\n");
+            var code = new Code
+            {
+                Lines = lines
+            };
+
+            _replacer.Replace(code);
+            Assert.True(code.GetContent().Contains(TestConstants.NotImplementedException));
+            Assert.False(code.GetContent().Contains(TestConstants.PrintStatement));
         }
     }
 }

@@ -7,5 +7,7 @@ namespace Probe
         public int LineStart { get; set; }
         
         public int LineEnd { get; set; }
+
+        public int NumLines => LineEnd - LineStart;
     }
 }

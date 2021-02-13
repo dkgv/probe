@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace Probe
 {
     public class SourceReplacer
@@ -17,16 +15,21 @@ namespace Probe
 
         public IEmitStrategy EmitStrategy { get; }
 
-        public Code Replace(Code code)
+        public void Replace(Code code)
         {
-            var methods = MethodExtractor.ExtractMethods(code);
+            var notImplementedEmitStrategy = new NotImplementedEmitStrategy();
 
-            foreach (var methodDefinition in methods)
+            foreach (var methodDefinition in MethodExtractor.ExtractMethods(code))
             {
-                code.Replace(methodDefinition.MethodBody.LineStart, methodDefinition.MethodBody.LineEnd, EmitStrategy.Emit);
-            }
+                var lines = new string[methodDefinition.MethodBody.NumLines];
+                for (var i = 0; i < methodDefinition.MethodBody.NumLines - 1; i++)
+                {
+                    lines[i] = EmitStrategy.Emit;
+                }
+                lines[^1] = notImplementedEmitStrategy.Emit;
 
-            return code;
+                code.Replace(methodDefinition.MethodBody.LineStart, methodDefinition.MethodBody.LineEnd, lines);
+            }
         }
     }
 }
