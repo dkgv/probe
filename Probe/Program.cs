@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
 
 namespace Probe
@@ -8,7 +7,7 @@ namespace Probe
     {
         static void Main(string[] args)
         {
-            var rootDirectory = args[1];
+            var rootDirectory = args[0];
             if (!Directory.Exists(rootDirectory))
             {
                 return;

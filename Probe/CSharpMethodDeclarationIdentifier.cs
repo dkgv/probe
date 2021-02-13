@@ -14,29 +14,40 @@ namespace Probe
             "class", "interface", "enum", "record"
         };
         
-        public bool Matches(string line, string nextLine)
+        public MethodVariant Find(string line, string nextLine)
         {
+            // Check inline format `int x(int y) => y * 2;`
+            if (line.Contains("=>") && line.Contains(";") && !line.Contains("{") && !line.Contains("}"))
+            {
+                return MethodVariant.InlineMethod;
+            }
+
             // Ensure method begins with modifier
             var parts = line.Split(" ");
             if (!Modifiers.Contains(parts[0]))
             {
-                return false;
+                return MethodVariant.None;
             }
 
             // Ensure we aren't looking at a class
             if (parts.Any(p => ClassTypes.Contains(p)))
             {
-                return false;
+                return MethodVariant.None;
             }
 
             var numOpenParenthesis = line.Count(c => c == '('); 
             var numCloseParenthesis = line.Count(c => c == ')'); 
             if (numOpenParenthesis == 0 || numCloseParenthesis == 0 || numOpenParenthesis != numCloseParenthesis)
             {
-                return false;
+                return MethodVariant.None;
             }
 
-            return nextLine.EndsWith("{");
+            if (nextLine.EndsWith("{"))
+            {
+                return MethodVariant.FullMethod;
+            }
+
+            return MethodVariant.None;
         }
     }
 }

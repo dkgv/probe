@@ -9,6 +9,7 @@
         public const string TestMethodSpaceBody = TestMethodSignature + "\n{\n\n}\n";
         public const string TestMethodPrintBody = TestMethodSignature + "\n{\n" + PrintStatement + "\n}\n";
         public const string PrintStatement = "Console.WriteLine(\"Test\");";
+        public const string TestInlineMethod = "int Do() => 1;\n";
 
         public const string TestClassWithSingleMethod = "public class TestClass {\n"
             + TestMethodPrintBody

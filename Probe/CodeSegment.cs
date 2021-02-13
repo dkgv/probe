@@ -1,3 +1,5 @@
+using System;
+
 namespace Probe
 {
     public class CodeSegment
@@ -8,6 +10,6 @@ namespace Probe
         
         public int LineEnd { get; set; }
 
-        public int NumLines => LineEnd - LineStart;
+        public int NumLines => Math.Max(1, LineEnd - LineStart);
     }
 }

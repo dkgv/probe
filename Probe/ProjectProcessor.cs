@@ -16,36 +16,21 @@ namespace Probe
 
         public void Process(string projectRootPath)
         {
-            var queue = new Queue<string>(Directory.GetFileSystemEntries(projectRootPath));
-
-            while (queue.Count > 0)
+            foreach (var entry in Directory.GetFiles(projectRootPath, "*.cs", SearchOption.AllDirectories))
             {
-                var entry = queue.Dequeue();
-
                 Console.WriteLine($"Processing {entry}");
 
-                if (Directory.Exists(entry))
+                var code = new Code
                 {
-                    // Enqueue all entries in this directory (nesting)
-                    foreach (var childEntry in Directory.GetFiles(entry))
-                    {
-                        queue.Enqueue(childEntry);
-                    }
-                }
-                else if (Path.GetExtension(entry).Equals(".cs"))
-                {
-                    var code = new Code
-                    {
-                        FilePath = entry,
-                        Lines = File.ReadAllLines(entry)
-                    };
+                    FilePath = entry,
+                    Lines = File.ReadAllLines(entry)
+                };
 
-                    // Replace content
-                    Replacer.Replace(code);
+                // Replace content
+                Replacer.Replace(code);
 
-                    // Overwrite existing content
-                    File.WriteAllLines(code.FilePath, code.Lines);
-                }
+                // Overwrite existing content
+                File.WriteAllLines(code.FilePath, code.Lines);
             }
         }
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Probe
 {
@@ -23,7 +24,8 @@ namespace Probe
 
                 if (currMethodDef == null)
                 {
-                    if (!MethodDeclarationIdentifier.Matches(currLine, nextLine))
+                    var methodVariant = MethodDeclarationIdentifier.Find(currLine, nextLine);
+                    if (methodVariant == MethodVariant.None)
                     {
                         continue;
                     }
@@ -41,8 +43,20 @@ namespace Probe
                         {
                             LineStart = line + 1,
                             LineEnd = line
-                        }
+                        },
+                        Variant = methodVariant
                     };
+
+                    if (methodVariant == MethodVariant.InlineMethod)
+                    {
+                        currMethodDef.MethodBody.LineStart = currMethodDef.MethodBody.LineEnd;
+
+                        currMethodDef.FullMethod.Content = currLine;
+                        currMethodDef.MethodBody.Content = currLine.Split("=>")[1].Trim();
+
+                        yield return currMethodDef;
+                        currMethodDef = null;
+                    }
                 }
                 else
                 {
@@ -55,9 +69,9 @@ namespace Probe
                     {
                         numOpenBrackets++;
                     }
-                    
+
                     currMethodDef.FullMethod.LineEnd++;
-                    
+
                     // Expand method body length if an orphan { still exists
                     if (numOpenBrackets > 0)
                     {
@@ -70,9 +84,9 @@ namespace Probe
 
                         // Remove }
                         currMethodDef.MethodBody.Content = code.Join(currMethodDef.MethodBody);
-                        
+
                         yield return currMethodDef;
-                        
+
                         // Reset method definition
                         currMethodDef = null;
                     }

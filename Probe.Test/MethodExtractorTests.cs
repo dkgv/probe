@@ -11,7 +11,26 @@ namespace Probe.Test
         [TestCase("public void Test(int a, int b)", "    {")]
         public void TestIsMethodDeclarationSuccess(string currLine, string nextLine)
         {
-            Assert.True(Extractor.MethodDeclarationIdentifier.Matches(currLine, nextLine));
+            Assert.AreEqual(MethodVariant.FullMethod, Extractor.MethodDeclarationIdentifier.Find(currLine, nextLine));
+        }
+
+        [TestCase(TestConstants.TestInlineMethod, new[]{ "1;" })]
+        public void TestInlineMethod(string source, string[] methodBodies)
+        {
+            Assert.AreEqual(MethodVariant.InlineMethod, Extractor.MethodDeclarationIdentifier.Find(source, string.Empty));
+
+            var code = new Code
+            {
+                Lines = source.Split("\n")
+            };
+            var methods = Extractor.ExtractMethods(code).ToArray();
+
+            Assert.AreEqual(methodBodies.Length, methods.Length);
+
+            for (var i = 0; i < methodBodies.Length; i++)
+            {
+                Assert.AreEqual(methodBodies[i], methods[i].MethodBody.Content);
+            }
         }
 
         [TestCase(TestConstants.TestMethodSignature, "")]
@@ -19,7 +38,7 @@ namespace Probe.Test
         [TestCase("public void Test)", "    {")]
         public void TestIsMethodDeclarationFailure(string currLine, string nextLine)
         {
-            Assert.False(Extractor.MethodDeclarationIdentifier.Matches(currLine, nextLine));
+            Assert.AreEqual(MethodVariant.None, Extractor.MethodDeclarationIdentifier.Find(currLine, nextLine));
         }
 
         [TestCase(TestConstants.TestMethod, 1,  new []{0}, new[] {""})]

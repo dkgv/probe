@@ -7,5 +7,7 @@ namespace Probe
         public CodeSegment FullMethod { get; set; }
         
         public CodeSegment MethodBody { get; set; }
+
+        public MethodVariant Variant { get; set; }
     }
 }

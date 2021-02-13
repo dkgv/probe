@@ -21,14 +21,32 @@ namespace Probe
 
             foreach (var methodDefinition in MethodExtractor.ExtractMethods(code))
             {
-                var lines = new string[methodDefinition.MethodBody.NumLines];
-                for (var i = 0; i < methodDefinition.MethodBody.NumLines - 1; i++)
+                if (methodDefinition.MethodBody.NumLines == 0)
                 {
-                    lines[i] = EmitStrategy.Emit;
+                    continue;
                 }
-                lines[^1] = notImplementedEmitStrategy.Emit;
 
-                code.Replace(methodDefinition.MethodBody.LineStart, methodDefinition.MethodBody.LineEnd, lines);
+                var bodyLineStart = methodDefinition.MethodBody.LineStart;
+                var bodyLineEnd = methodDefinition.MethodBody.LineEnd;
+
+                switch (methodDefinition.Variant)
+                {
+                    case MethodVariant.FullMethod:
+
+                        var lines = new string[methodDefinition.MethodBody.NumLines];
+                        for (var i = 0; i < methodDefinition.MethodBody.NumLines - 1; i++)
+                        {
+                            lines[i] = EmitStrategy.Emit;
+                        }
+                        lines[^1] = notImplementedEmitStrategy.Emit;
+                        code.Replace(bodyLineStart, bodyLineEnd, lines);
+                        break;
+
+                    case MethodVariant.InlineMethod:
+                        var inline = methodDefinition.FullMethod.Content.Replace(methodDefinition.MethodBody.Content, notImplementedEmitStrategy.Emit);
+                        code.Lines[bodyLineStart - 1] = inline;
+                        break;
+                }
             }
         }
     }
