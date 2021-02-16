@@ -8,6 +8,6 @@ namespace Probe
         
         public CodeSegment MethodBody { get; set; }
 
-        public MethodVariant Variant { get; set; }
+        public MethodDeclaration Declaration { get; set; }
     }
 }

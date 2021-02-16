@@ -1,3 +1,5 @@
+using System.Linq;
+
 namespace Probe
 {
     public class SourceReplacer
@@ -19,22 +21,22 @@ namespace Probe
         {
             var notImplementedEmitStrategy = new NotImplementedEmitStrategy();
 
-            foreach (var methodDefinition in MethodExtractor.ExtractMethods(code))
+            var methodDefinitions = MethodExtractor.ExtractMethods(code).ToList();
+            foreach (var methodDef in methodDefinitions)
             {
-                if (methodDefinition.MethodBody.NumLines == 0)
-                {
-                    continue;
-                }
+                var bodyLineStart = methodDef.MethodBody.LineStartIndex;
+                var bodyLineEnd = methodDef.MethodBody.LineEndIndex;
 
-                var bodyLineStart = methodDefinition.MethodBody.LineStart;
-                var bodyLineEnd = methodDefinition.MethodBody.LineEnd;
-
-                switch (methodDefinition.Variant)
+                switch (methodDef.Declaration.Variant)
                 {
                     case MethodVariant.FullMethod:
+                        if (methodDef.MethodBody.NumLines == 0)
+                        {
+                            continue;
+                        }
 
-                        var lines = new string[methodDefinition.MethodBody.NumLines];
-                        for (var i = 0; i < methodDefinition.MethodBody.NumLines - 1; i++)
+                        var lines = new string[methodDef.MethodBody.NumLines];
+                        for (var i = 0; i < methodDef.MethodBody.NumLines; i++)
                         {
                             lines[i] = EmitStrategy.Emit;
                         }
@@ -43,8 +45,8 @@ namespace Probe
                         break;
 
                     case MethodVariant.InlineMethod:
-                        var inline = methodDefinition.FullMethod.Content.Replace(methodDefinition.MethodBody.Content, notImplementedEmitStrategy.Emit);
-                        code.Lines[bodyLineStart - 1] = inline;
+                        var inline = methodDef.FullMethod.Content.Replace(methodDef.MethodBody.Content, notImplementedEmitStrategy.Emit);
+                        code.Lines[bodyLineStart] = inline;
                         break;
                 }
             }

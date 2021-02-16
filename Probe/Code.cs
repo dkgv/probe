@@ -23,11 +23,18 @@ namespace Probe
 
         public string[] Lines { get; set; }
 
-        public string Join(CodeSegment segment)
+        public string Join(CodeSegment segment) => Join(segment.LineStartIndex, segment.LineEndIndex);
+
+        public string Join(int lineStart, int lineEnd)
         {
+            if (lineStart == lineEnd)
+            {
+                return Lines[lineStart];
+            }
+
             var sb = new StringBuilder();
             
-            for (var i = segment.LineStart; i < segment.LineEnd; i++)
+            for (var i = lineStart; i < lineEnd; i++)
             {
                 sb.Append(Lines[i]).Append("\n");
             }
@@ -37,6 +44,11 @@ namespace Probe
 
         public void Replace(int lineFrom, int lineTo, string[] replacements)
         {
+            if (lineFrom == lineTo)
+            {
+                Lines[lineFrom] = replacements[0];
+            }
+
             for (int i = lineFrom, j = 0; i < lineTo; i++, j++)
             {
                 Lines[i] = replacements[j];

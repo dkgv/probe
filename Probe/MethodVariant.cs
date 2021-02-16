@@ -3,7 +3,6 @@
     public enum MethodVariant
     {
         FullMethod,
-        InlineMethod,
-        None
+        InlineMethod
     }
 }
