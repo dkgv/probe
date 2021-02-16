@@ -5,15 +5,12 @@ namespace Probe.Test
 {
     public class MethodExtractorTests
     {
-        private static readonly CSharpMethodExtractor Extractor = new(new CSharpMethodDeclarationIdentifier());
+        private static readonly CSharpMethodExtractor Extractor = new CSharpMethodExtractor(new CSharpMethodDeclarationIdentifier());
         
         [TestCase(TestConstants.TestInlineMethod, new[]{ "1;" })]
         public void TestInlineMethod(string source, string[] methodBodies)
         {
-            var code = new Code
-            {
-                Lines = source.Split("\n")
-            };
+            var code = new Code {Lines = source.Split("\n")};
 
             Assert.AreEqual(MethodVariant.InlineMethod, Extractor.MethodDeclarationIdentifier.Find(0, code).Variant);
 
@@ -27,11 +24,21 @@ namespace Probe.Test
             }
         }
 
-        [TestCase(TestConstants.TestMethod, 1, new[] {""})]
-        [TestCase(TestConstants.TestMethodSpaceBody, 1, new[] {"\n"})]
-        [TestCase(TestConstants.TestMethod + TestConstants.TestMethod, 2, new[] {"", ""})]
-        [TestCase(TestConstants.TestMethodWithNestedMethod, 1, new[] { TestConstants.TestMethod })]
-        public void TestExtractMethods(string source, int numExpectedMethods, string[] expectedMethodBodies)
+        [TestCase(TestConstants.TestNotInlineMethod)]
+        public void TestNotInlineMethod(string source)
+        {
+            var code = new Code {Lines = source.Split("\n")};
+
+            var methodDeclaration = Extractor.MethodDeclarationIdentifier.Find(0, code);
+            Assert.AreEqual(null, methodDeclaration);
+        }
+
+        [TestCase(TestConstants.TestMethod, 1, new[]{1}, new[] {""})]
+        [TestCase(TestConstants.TestMethodSpaceBody, 1, new[]{1}, new[] {"\n"})]
+        [TestCase(TestConstants.TestMethod + TestConstants.TestMethod, 2, new[]{1, 1}, new[] {"", ""})]
+        [TestCase(TestConstants.TestMethodWithNestedMethod, 1, new[]{3}, new[] { TestConstants.TestMethod })]
+        [TestCase(TestConstants.TestStaticMethod, 1, new[]{1}, new[] {""})]
+        public void TestExtractMethods(string source, int numExpectedMethods, int[] expectedMethodBodyLengths, string[] expectedMethodBodies)
         {
             var code = new Code
             {
@@ -44,6 +51,8 @@ namespace Probe.Test
             for (var i = methods.Length - 1; i >= 0; i--)
             {
                 var methodDef = methods[i];
+                Assert.AreEqual(expectedMethodBodyLengths[i], methodDef.MethodBody.NumLines);
+
                 var expectedMethodBody = expectedMethodBodies[i];
                 Assert.AreEqual(expectedMethodBody, methodDef.MethodBody.Content);
             }

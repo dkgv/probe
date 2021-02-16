@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 
 namespace Probe
@@ -22,6 +23,7 @@ namespace Probe
             var notImplementedEmitStrategy = new NotImplementedEmitStrategy();
 
             var methodDefinitions = MethodExtractor.ExtractMethods(code).ToList();
+            Console.WriteLine($"\t-> Processing {methodDefinitions.Count} methods");
             foreach (var methodDef in methodDefinitions)
             {
                 var bodyLineStart = methodDef.MethodBody.LineStartIndex;

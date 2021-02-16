@@ -5,13 +5,14 @@ namespace Probe.Test
     public class SourceReplacerTests
     {
         private SourceReplacer _replacer;
+        private IMethodExtractor _methodExtractor;
 
         [SetUp]
         public void SetUp()
         {
-            var dependencyExtractor = new CSharpDependencyExtractor();
-            var methodExtractor = new CSharpMethodExtractor(new CSharpMethodDeclarationIdentifier());
-            _replacer = new SourceReplacer(dependencyExtractor, methodExtractor, new RemovedCommentEmitStrategy());
+            var dependencyExtractor = new CSharpDependencyExtractor(); 
+            _methodExtractor = new CSharpMethodExtractor(new CSharpMethodDeclarationIdentifier());
+            _replacer = new SourceReplacer(dependencyExtractor, _methodExtractor, new RemovedCommentEmitStrategy());
         }
 
         [TestCase(TestConstants.TestMethodPrintBody, "Console.WriteLine(\"Test\");", TestConstants.NotImplementedException)]
@@ -20,10 +21,7 @@ namespace Probe.Test
         public void TestReplaceSingleMethod(string source, string bodyBefore, string after)
         {
             var lines = source.Split("\n");
-            var code = new Code
-            {
-                Lines = lines
-            };
+            var code = new Code {Lines = lines};
 
             _replacer.Replace(code);
 
@@ -32,13 +30,22 @@ namespace Probe.Test
         }
 
         [Test]
-        public void TestReplaceClass()
+        public void TestReplaceWithinClass()
         {
             var lines = TestConstants.TestClassWithSingleMethod.Split("\n");
-            var code = new Code
-            {
-                Lines = lines
-            };
+            var code = new Code {Lines = lines};
+
+            _replacer.Replace(code);
+
+            Assert.True(code.GetContent().Contains(TestConstants.NotImplementedException));
+            Assert.False(code.GetContent().Contains(TestConstants.PrintStatement));
+        }
+
+        [Test]
+        public void TestReplaceWithinNamespace()
+        {
+            var lines = TestConstants.TestNamespaceAndClassWithSingleMethod.Split("\n");
+            var code = new Code {Lines = lines};
 
             _replacer.Replace(code);
 

@@ -16,8 +16,15 @@ namespace Probe
         
         public MethodDeclaration Find(int lineIndex, Code code)
         {
-            var currLine = code.Lines[lineIndex];
+            var currLine = code.Lines[lineIndex].Trim();
             if (string.IsNullOrEmpty(currLine))
+            {
+                return null;
+            }
+
+            // Ensure method begins with access modifier
+            var parts = currLine.Split(" ");
+            if (!AccessModifiers.Contains(parts[0]))
             {
                 return null;
             }
@@ -35,13 +42,6 @@ namespace Probe
                     },
                     Variant = MethodVariant.InlineMethod
                 };
-            }
-
-            // Ensure method begins with access modifier
-            var parts = currLine.Split(" ");
-            if (!AccessModifiers.Contains(parts[0]))
-            {
-                return null;
             }
 
             // Ensure we aren't looking at a class
