@@ -24,7 +24,8 @@ namespace Probe.Test
             }
         }
 
-        [TestCase(TestConstants.TestNotInlineMethod)]
+        [TestCase(TestConstants.TestNotInlineMethod1)]
+        [TestCase(TestConstants.TestNotInlineMethod2)]
         public void TestNotInlineMethod(string source)
         {
             var code = new Code {Lines = source.Split("\n")};
@@ -38,6 +39,7 @@ namespace Probe.Test
         [TestCase(TestConstants.TestMethod + TestConstants.TestMethod, 2, new[]{1, 1}, new[] {"", ""})]
         [TestCase(TestConstants.TestMethodWithNestedMethod, 1, new[]{3}, new[] { TestConstants.TestMethod })]
         [TestCase(TestConstants.TestStaticMethod, 1, new[]{1}, new[] {""})]
+        [TestCase(TestConstants.TestConstructor, 1, new[]{1}, new[] {""})]
         public void TestExtractMethods(string source, int numExpectedMethods, int[] expectedMethodBodyLengths, string[] expectedMethodBodies)
         {
             var code = new Code

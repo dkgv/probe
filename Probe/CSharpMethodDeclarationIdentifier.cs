@@ -4,6 +4,11 @@ namespace Probe
 {
     public class CSharpMethodDeclarationIdentifier : IMethodDeclarationIdentifier
     {
+        private static readonly string[] Primitives =
+        {
+            "int", "float", "short", "long", "bool", "string", "byte", "double", "object", "ulong", "ushort", "uint", "decimal"
+        };
+
         private static readonly string[] AccessModifiers =
         {
             "public", "private", "protected", "internal"
@@ -24,7 +29,7 @@ namespace Probe
 
             // Ensure method begins with access modifier
             var parts = currLine.Split(" ");
-            if (!AccessModifiers.Contains(parts[0]))
+            if (!AccessModifiers.Contains(parts[0]) && !Primitives.Contains(parts[0]))
             {
                 return null;
             }
@@ -55,9 +60,10 @@ namespace Probe
             var endIndex = -1;
             for (var i = lineIndex; i < code.Lines.Length; i++)
             {
-                if (code.Lines[i].Contains(")"))
+                var numCloseParenthesis = code.Lines[i].Count(ch => ch == ')');
+                if (numCloseParenthesis > 0)
                 {
-                    numOpenParenthesis--;
+                    numOpenParenthesis -= numCloseParenthesis;
                 }
 
                 if (numOpenParenthesis == 0)
