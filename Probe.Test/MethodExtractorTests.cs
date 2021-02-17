@@ -39,13 +39,11 @@ namespace Probe.Test
         [TestCase(TestConstants.TestMethod + TestConstants.TestMethod, 2, new[]{1, 1}, new[] {"", ""})]
         [TestCase(TestConstants.TestMethodWithNestedMethod, 1, new[]{3}, new[] { TestConstants.TestMethod })]
         [TestCase(TestConstants.TestStaticMethod, 1, new[]{1}, new[] {""})]
-        [TestCase(TestConstants.TestConstructor, 1, new[]{1}, new[] {""})]
+        [TestCase(TestConstants.TestConstructor1, 1, new[]{1}, new[] {""})]
+        [TestCase(TestConstants.TestConstructor2, 1, new[]{6}, new[] {""})]
         public void TestExtractMethods(string source, int numExpectedMethods, int[] expectedMethodBodyLengths, string[] expectedMethodBodies)
         {
-            var code = new Code
-            {
-                Lines = source.Split('\n')
-            };
+            var code = new Code {Lines = source.Split('\n')};
             var methods = Extractor.ExtractMethods(code).ToArray();
             
             Assert.AreEqual(numExpectedMethods, methods.Length);

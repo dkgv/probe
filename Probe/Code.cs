@@ -1,27 +1,23 @@
+using System.Linq;
 using System.Text;
 
 namespace Probe
 {
     public class Code
     {
+        private string[] _lines;
+
         public Code()
         {
         }
 
-        public Code(CodeSegment[] segments)
-        {
-            var sb = new StringBuilder();
-            foreach (var codeSegment in segments)
-            {
-                sb.Append(codeSegment.Content);
-            }
-
-            Lines = sb.ToString().Split("\n");
-        }
-
         public string FilePath { get; set; }
 
-        public string[] Lines { get; set; }
+        public string[] Lines
+        {
+            get => _lines;
+            set => _lines = value.Select(x => x.Replace("\r", "")).ToArray();
+        }
 
         public string Join(CodeSegment segment) => Join(segment.LineStartIndex, segment.LineEndIndex);
 
