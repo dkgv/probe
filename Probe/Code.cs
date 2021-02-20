@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -5,18 +6,23 @@ namespace Probe
 {
     public class Code
     {
-        private string[] _lines;
+        private List<string> _lines;
 
         public Code()
         {
         }
 
+        public Code(IEnumerable<string> lines)
+        {
+            Lines = lines.ToList();
+        }
+
         public string FilePath { get; set; }
 
-        public string[] Lines
+        public List<string> Lines
         {
             get => _lines;
-            set => _lines = value.Select(x => x.Replace("\r", "")).ToArray();
+            set => _lines = value.Select(x => x.Replace("\r", "")).ToList();
         }
 
         public string Join(CodeSegment segment) => Join(segment.LineStartIndex, segment.LineEndIndex);

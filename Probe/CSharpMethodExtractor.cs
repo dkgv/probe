@@ -17,7 +17,7 @@ namespace Probe
             var numOpenBrackets = 0;
             MethodDefinition currMethodDef = null;
             
-            for (var i = 0; i < code.Lines.Length; i++)
+            for (var i = 0; i < code.Lines.Count; i++)
             {
                 var currLine = code.Lines[i].Trim();
 

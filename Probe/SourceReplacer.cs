@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Probe
 {
@@ -24,6 +26,7 @@ namespace Probe
 
             var methodDefinitions = MethodExtractor.ExtractMethods(code).ToList();
             Console.WriteLine($"\t-> Processing {methodDefinitions.Count} methods");
+
             foreach (var methodDef in methodDefinitions)
             {
                 var bodyLineStart = methodDef.MethodBody.LineStartIndex;
@@ -37,13 +40,20 @@ namespace Probe
                             continue;
                         }
 
-                        var lines = new string[methodDef.MethodBody.NumLines];
+                        var lines = new List<string>(methodDef.MethodBody.NumLines);
                         for (var i = 0; i < methodDef.MethodBody.NumLines; i++)
                         {
-                            lines[i] = EmitStrategy.Emit;
+                            lines.Add(EmitStrategy.Emit);
                         }
+
                         lines[^1] = notImplementedEmitStrategy.Emit;
-                        code.Replace(bodyLineStart, bodyLineEnd, lines);
+
+                        code.Replace(bodyLineStart, bodyLineEnd, lines.ToArray());
+
+                        if (!code.Lines.Any(line => lines.Contains("}")))
+                        {
+                            code.Lines.Add("}");
+                        }
                         break;
 
                     case MethodVariant.InlineMethod:

@@ -59,7 +59,7 @@ namespace Probe
             var numOpenParenthesis = currLine.Count(c => c == '(');
             var initialNumOpenParenthesis = numOpenParenthesis;
             var endIndex = -1;
-            for (var i = lineIndex; i < code.Lines.Length; i++)
+            for (var i = lineIndex; i < code.Lines.Count; i++)
             {
                 var numCloseParenthesis = code.Lines[i].Count(ch => ch == ')');
                 if (numCloseParenthesis > 0)

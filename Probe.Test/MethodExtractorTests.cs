@@ -10,7 +10,7 @@ namespace Probe.Test
         [TestCase(TestConstants.TestInlineMethod, new[]{ "1;" })]
         public void TestInlineMethod(string source, string[] methodBodies)
         {
-            var code = new Code {Lines = source.Split("\n")};
+            var code = new Code(source.Split("\n"));
 
             Assert.AreEqual(MethodVariant.InlineMethod, Extractor.MethodDeclarationIdentifier.Find(0, code).Variant);
 
@@ -28,7 +28,7 @@ namespace Probe.Test
         [TestCase(TestConstants.TestNotInlineMethod2)]
         public void TestNotInlineMethod(string source)
         {
-            var code = new Code {Lines = source.Split("\n")};
+            var code = new Code(source.Split("\n"));
 
             var methodDeclaration = Extractor.MethodDeclarationIdentifier.Find(0, code);
             Assert.AreEqual(null, methodDeclaration);
@@ -37,7 +37,7 @@ namespace Probe.Test
         [TestCase(TestConstants.TestProperty)]
         public void TestNotProperty(string source)
         {
-            var code = new Code {Lines = source.Split("\n")};
+            var code = new Code(source.Split("\n"));
 
             var methodDeclaration = Extractor.MethodDeclarationIdentifier.Find(0, code);
             Assert.AreEqual(null, methodDeclaration);
@@ -50,9 +50,10 @@ namespace Probe.Test
         [TestCase(TestConstants.TestStaticMethod, 1, new[]{1}, new[] {""})]
         [TestCase(TestConstants.TestConstructor1, 1, new[]{1}, new[] {""})]
         [TestCase(TestConstants.TestConstructor2, 1, new[]{6}, new[] {TestConstants.TestConstructor2Body})]
+        [TestCase(TestConstants.TestConstructor3, 1, new[]{1}, new[] {""})]
         public void TestExtractMethods(string source, int numExpectedMethods, int[] expectedMethodBodyLengths, string[] expectedMethodBodies)
         {
-            var code = new Code {Lines = source.Split('\n')};
+            var code = new Code(source.Split('\n'));
             var methods = Extractor.ExtractMethods(code).ToArray();
             
             Assert.AreEqual(numExpectedMethods, methods.Length);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace Probe
 {
@@ -23,7 +24,7 @@ namespace Probe
                 var code = new Code
                 {
                     FilePath = entry,
-                    Lines = File.ReadAllLines(entry)
+                    Lines = File.ReadAllLines(entry).ToList()
                 };
 
                 // Replace content
