@@ -57,6 +57,7 @@ namespace Probe
 
             // We are looking at [accessModifier] [name]
             var numOpenParenthesis = currLine.Count(c => c == '(');
+            var initialNumOpenParenthesis = numOpenParenthesis;
             var endIndex = -1;
             for (var i = lineIndex; i < code.Lines.Length; i++)
             {
@@ -74,6 +75,12 @@ namespace Probe
             }
 
             if (endIndex == -1 || !code.Lines[endIndex + 1].EndsWith("{"))
+            {
+                return null;
+            }
+
+            // Skip properties
+            if (endIndex == 0 && initialNumOpenParenthesis == 0)
             {
                 return null;
             }

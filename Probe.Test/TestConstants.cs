@@ -11,7 +11,9 @@
         public const string TestMethodSpaceBody = TestMethodSignature + "\n{\n\n}\n";
         public const string TestMethodPrintBody = TestMethodSignature + "\n{\n" + PrintStatement + "\n}\n";
         public const string TestConstructor1 = "private Cool(int x) : base(x)\n{\n}";
-        public const string TestConstructor2 = "public Constructor(List<Tuple<int[], int>> ints, int name = null) : this(name)\n{\nforeach (var (a, b) in data)\n{\nforeach (var c in a)\n{\n}\n}\n}";
+        public const string TestConstructor2Body = "foreach (var (a, b) in data)\n{\nforeach (var c in a)\n{\n}\n}\n";
+        public const string TestConstructor2 = "public Constructor(List<Tuple<int[], int>> ints, int name = null) : this(name)\n{\n" + TestConstructor2Body + "}";
+        public const string TestProperty = "public bool Enabled\n{\nget => true;\nset => x = value;\n}";
 
         public const string PrintStatement = "Console.WriteLine(\"Test\");";
 

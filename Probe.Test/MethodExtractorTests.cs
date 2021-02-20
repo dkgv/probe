@@ -34,13 +34,22 @@ namespace Probe.Test
             Assert.AreEqual(null, methodDeclaration);
         }
 
+        [TestCase(TestConstants.TestProperty)]
+        public void TestNotProperty(string source)
+        {
+            var code = new Code {Lines = source.Split("\n")};
+
+            var methodDeclaration = Extractor.MethodDeclarationIdentifier.Find(0, code);
+            Assert.AreEqual(null, methodDeclaration);
+        }
+
         [TestCase(TestConstants.TestMethod, 1, new[]{1}, new[] {""})]
         [TestCase(TestConstants.TestMethodSpaceBody, 1, new[]{1}, new[] {"\n"})]
         [TestCase(TestConstants.TestMethod + TestConstants.TestMethod, 2, new[]{1, 1}, new[] {"", ""})]
         [TestCase(TestConstants.TestMethodWithNestedMethod, 1, new[]{3}, new[] { TestConstants.TestMethod })]
         [TestCase(TestConstants.TestStaticMethod, 1, new[]{1}, new[] {""})]
         [TestCase(TestConstants.TestConstructor1, 1, new[]{1}, new[] {""})]
-        [TestCase(TestConstants.TestConstructor2, 1, new[]{6}, new[] {""})]
+        [TestCase(TestConstants.TestConstructor2, 1, new[]{6}, new[] {TestConstants.TestConstructor2Body})]
         public void TestExtractMethods(string source, int numExpectedMethods, int[] expectedMethodBodyLengths, string[] expectedMethodBodies)
         {
             var code = new Code {Lines = source.Split('\n')};
