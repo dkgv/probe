@@ -23,7 +23,7 @@ namespace Probe
 
                 if (currMethodDef == null)
                 {
-                    var declaration = MethodDeclarationIdentifier.Find(i, code);
+                    var declaration = MethodDeclarationIdentifier.TryFind(i, code);
                     if (declaration == null)
                     {
                         continue;

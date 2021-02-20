@@ -12,7 +12,7 @@ namespace Probe.Test
         {
             var code = new Code(source.Split("\n"));
 
-            Assert.AreEqual(MethodVariant.InlineMethod, Extractor.MethodDeclarationIdentifier.Find(0, code).Variant);
+            Assert.AreEqual(MethodVariant.InlineMethod, Extractor.MethodDeclarationIdentifier.TryFind(0, code).Variant);
 
             var methods = Extractor.ExtractMethods(code).ToArray();
 
@@ -30,16 +30,17 @@ namespace Probe.Test
         {
             var code = new Code(source.Split("\n"));
 
-            var methodDeclaration = Extractor.MethodDeclarationIdentifier.Find(0, code);
+            var methodDeclaration = Extractor.MethodDeclarationIdentifier.TryFind(0, code);
             Assert.AreEqual(null, methodDeclaration);
         }
 
-        [TestCase(TestConstants.TestProperty)]
-        public void TestNotProperty(string source)
+        [TestCase(TestConstants.TestProperty1)]
+        [TestCase(TestConstants.TestProperty2)]
+        public void TestEnsureMethodNotProperty(string source)
         {
             var code = new Code(source.Split("\n"));
 
-            var methodDeclaration = Extractor.MethodDeclarationIdentifier.Find(0, code);
+            var methodDeclaration = Extractor.MethodDeclarationIdentifier.TryFind(0, code);
             Assert.AreEqual(null, methodDeclaration);
         }
 

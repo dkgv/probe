@@ -19,7 +19,7 @@ namespace Probe
             "class", "interface", "enum", "record"
         };
         
-        public MethodDeclaration Find(int lineIndex, Code code)
+        public MethodDeclaration TryFind(int lineIndex, Code code)
         {
             var currLine = code.Lines[lineIndex].Trim();
             if (string.IsNullOrEmpty(currLine))
@@ -57,30 +57,27 @@ namespace Probe
 
             // We are looking at [accessModifier] [name]
             var numOpenParenthesis = currLine.Count(c => c == '(');
-            var initialNumOpenParenthesis = numOpenParenthesis;
             var endIndex = -1;
-            for (var i = lineIndex; i < code.Lines.Count; i++)
-            {
-                var numCloseParenthesis = code.Lines[i].Count(ch => ch == ')');
-                if (numCloseParenthesis > 0)
-                {
-                    numOpenParenthesis -= numCloseParenthesis;
-                }
 
-                if (numOpenParenthesis == 0)
+            if (numOpenParenthesis > 0)
+            {
+                for (var i = lineIndex; i < code.Lines.Count; i++)
                 {
-                    endIndex = i;
-                    break;
+                    var numCloseParenthesis = code.Lines[i].Count(ch => ch == ')');
+                    if (numCloseParenthesis > 0)
+                    {
+                        numOpenParenthesis -= numCloseParenthesis;
+                    }
+
+                    if (numOpenParenthesis == 0)
+                    {
+                        endIndex = i;
+                        break;
+                    }
                 }
             }
 
             if (endIndex == -1 || !code.Lines[endIndex + 1].EndsWith("{"))
-            {
-                return null;
-            }
-
-            // Skip properties
-            if (endIndex == 0 && initialNumOpenParenthesis == 0)
             {
                 return null;
             }

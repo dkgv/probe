@@ -21,8 +21,7 @@ namespace Probe.Test
         [TestCase(TestConstants.TestClassWithSingleMethod, TestConstants.PrintStatement, TestConstants.NotImplementedException)]
         public void TestReplaceSingleMethod(string source, string bodyBefore, string expectedAfter)
         {
-            var lines = source.Split("\n");
-            var code = new Code(lines);
+            var code = new Code(source.Split("\n"));
 
             _replacer.Replace(code);
 
@@ -30,13 +29,21 @@ namespace Probe.Test
             Assert.True(code.GetContent().Contains(expectedAfter));
         }
 
+        [TestCase(TestConstants.TestProperty1, TestConstants.TestPropertyBody1)]
+        [TestCase(TestConstants.TestProperty2, TestConstants.TestPropertyBody2)]
+        public void TestDontReplaceIndividualProperty(string source, string expectedBody)
+        {
+            var code = new Code(source.Split("\n"));
+            _replacer.Replace(code);
+            Assert.True(code.GetContent().Contains(expectedBody));
+        }
+
         [TestCase(TestConstants.TestConstructor1, "", TestConstants.NotImplementedException)]
         [TestCase(TestConstants.TestConstructor2, TestConstants.TestConstructor2Body, TestConstants.NotImplementedException)]
         [TestCase(TestConstants.TestConstructor3, "", TestConstants.NotImplementedException)]
         public void TestReplaceConstructor(string source, string bodyBefore, string expectedAfter)
         {
-            var lines = source.Split("\n");
-            var code = new Code(lines);
+            var code = new Code(source.Split("\n"));
 
             _replacer.Replace(code);
 
@@ -49,7 +56,7 @@ namespace Probe.Test
         }
 
         [Test]
-        public void TestReplaceTwoConstructors()
+        public void TestReplaceClassWithTwoConstructors()
         {
             var lines = TestConstants.TestClassWithConstructor1And2.Split("\n");
             var code = new Code(lines);
@@ -58,8 +65,19 @@ namespace Probe.Test
 
             Assert.False(code.GetContent().Contains(TestConstants.TestConstructor1));
             Assert.False(code.GetContent().Contains(TestConstants.TestConstructor2));
-
             Assert.True(code.GetContent().Contains(TestConstants.NotImplementedException));
+        }
+
+        [Test]
+        public void TestDontReplaceClassWithTwoProperties()
+        {
+            var lines = TestConstants.TestClassWithTwoProperties.Split("\n");
+            var code = new Code(lines);
+
+            _replacer.Replace(code);
+
+            Assert.True(code.GetContent().Contains(TestConstants.TestProperty1));
+            Assert.True(code.GetContent().Contains(TestConstants.TestProperty2));
         }
 
         [Test]
