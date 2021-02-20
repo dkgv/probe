@@ -24,43 +24,54 @@ namespace Probe
         {
             var notImplementedEmitStrategy = new NotImplementedEmitStrategy();
 
-            var methodDefinitions = MethodExtractor.ExtractMethods(code).ToList();
-            Console.WriteLine($"\t-> Processing {methodDefinitions.Count} methods");
+            var processed = new HashSet<string>();
 
-            foreach (var methodDef in methodDefinitions)
+            MethodDefinition FindUnprocessed()
             {
-                var bodyLineStart = methodDef.MethodBody.LineStartIndex;
-                var bodyLineEnd = methodDef.MethodBody.LineEndIndex;
+                // We need to continuously extract methods if a modification changes indexing
+                var definitions = MethodExtractor.ExtractMethods(code);
+                return definitions.FirstOrDefault(definition => !processed.Contains(definition.Signature));
+            }
 
-                switch (methodDef.Declaration.Variant)
+            MethodDefinition next;
+            while ((next = FindUnprocessed()) != default)
+            {
+                var bodyLineStart = next.MethodBody.LineStartIndex;
+                var bodyLineEnd = next.MethodBody.LineEndIndex;
+
+                switch (next.Declaration.Variant)
                 {
                     case MethodVariant.FullMethod:
-                        if (methodDef.MethodBody.NumLines == 0)
+                        if (next.MethodBody.NumLines == 0)
                         {
                             continue;
                         }
 
-                        var lines = new List<string>(methodDef.MethodBody.NumLines);
-                        for (var i = 0; i < methodDef.MethodBody.NumLines; i++)
+                        var lines = new List<string>(next.MethodBody.NumLines);
+                        for (var i = 0; i < next.MethodBody.NumLines; i++)
                         {
                             lines.Add(EmitStrategy.Emit);
                         }
 
                         lines[^1] = notImplementedEmitStrategy.Emit;
 
-                        code.Replace(bodyLineStart, bodyLineEnd, lines.ToArray());
-
-                        if (!code.Lines.Any(line => lines.Contains("}")))
+                        if (next.MethodBody.NumLines == 1 && !next.FullMethod.Content.Contains("}"))
                         {
-                            code.Lines.Add("}");
+                            lines.Add("}");
+                            code.Lines.Insert(bodyLineEnd, "");
                         }
+
+                        code.Replace(bodyLineStart, bodyLineEnd, lines.ToArray());
                         break;
 
                     case MethodVariant.InlineMethod:
-                        var inline = methodDef.FullMethod.Content.Replace(methodDef.MethodBody.Content, notImplementedEmitStrategy.Emit);
+                        var inline = next.FullMethod.Content.Replace(next.MethodBody.Content,
+                            notImplementedEmitStrategy.Emit);
                         code.Lines[bodyLineStart] = inline;
                         break;
                 }
+
+                processed.Add(next.Signature);
             }
         }
     }

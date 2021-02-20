@@ -16,8 +16,9 @@ namespace Probe.Test
         }
 
         [TestCase(TestConstants.TestMethodPrintBody, "Console.WriteLine(\"Test\");", TestConstants.NotImplementedException)]
-        [TestCase(TestConstants.TestMethodWithNestedMethod, TestConstants.TestMethod, TestConstants.NotImplementedException)]
+        [TestCase(TestConstants.TestMethodWithNestedMethod, TestConstants.TestMethodEmptyBody, TestConstants.NotImplementedException)]
         [TestCase(TestConstants.TestInlineMethod, "1;", TestConstants.NotImplementedException)]
+        [TestCase(TestConstants.TestClassWithSingleMethod, TestConstants.PrintStatement, TestConstants.NotImplementedException)]
         public void TestReplaceSingleMethod(string source, string bodyBefore, string expectedAfter)
         {
             var lines = source.Split("\n");
@@ -31,6 +32,7 @@ namespace Probe.Test
 
         [TestCase(TestConstants.TestConstructor1, "", TestConstants.NotImplementedException)]
         [TestCase(TestConstants.TestConstructor2, TestConstants.TestConstructor2Body, TestConstants.NotImplementedException)]
+        [TestCase(TestConstants.TestConstructor3, "", TestConstants.NotImplementedException)]
         public void TestReplaceConstructor(string source, string bodyBefore, string expectedAfter)
         {
             var lines = source.Split("\n");
@@ -47,15 +49,17 @@ namespace Probe.Test
         }
 
         [Test]
-        public void TestReplaceWithinClass()
+        public void TestReplaceTwoConstructors()
         {
-            var lines = TestConstants.TestClassWithSingleMethod.Split("\n");
+            var lines = TestConstants.TestClassWithConstructor1And2.Split("\n");
             var code = new Code(lines);
 
             _replacer.Replace(code);
 
+            Assert.False(code.GetContent().Contains(TestConstants.TestConstructor1));
+            Assert.False(code.GetContent().Contains(TestConstants.TestConstructor2));
+
             Assert.True(code.GetContent().Contains(TestConstants.NotImplementedException));
-            Assert.False(code.GetContent().Contains(TestConstants.PrintStatement));
         }
 
         [Test]

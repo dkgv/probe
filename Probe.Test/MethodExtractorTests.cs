@@ -43,14 +43,16 @@ namespace Probe.Test
             Assert.AreEqual(null, methodDeclaration);
         }
 
-        [TestCase(TestConstants.TestMethod, 1, new[]{1}, new[] {""})]
+        [TestCase(TestConstants.TestMethodEmptyBody, 1, new[]{1}, new[] {""})]
         [TestCase(TestConstants.TestMethodSpaceBody, 1, new[]{1}, new[] {"\n"})]
-        [TestCase(TestConstants.TestMethod + TestConstants.TestMethod, 2, new[]{1, 1}, new[] {"", ""})]
-        [TestCase(TestConstants.TestMethodWithNestedMethod, 1, new[]{3}, new[] { TestConstants.TestMethod })]
+        [TestCase(TestConstants.TestMethodEmptyBody + TestConstants.TestMethodEmptyBody, 2, new[]{1, 1}, new[] {"", ""})]
+        [TestCase(TestConstants.TestMethodWithNestedMethod, 1, new[]{3}, new[] { TestConstants.TestMethodEmptyBody })]
         [TestCase(TestConstants.TestStaticMethod, 1, new[]{1}, new[] {""})]
         [TestCase(TestConstants.TestConstructor1, 1, new[]{1}, new[] {""})]
         [TestCase(TestConstants.TestConstructor2, 1, new[]{6}, new[] {TestConstants.TestConstructor2Body})]
         [TestCase(TestConstants.TestConstructor3, 1, new[]{1}, new[] {""})]
+        [TestCase(TestConstants.TestClassWithSingleMethod, 1, new[]{1}, new[] {TestConstants.PrintStatement})]
+        [TestCase(TestConstants.TestClassWithConstructor1And2, 2, new[]{1,6}, new[] {"", TestConstants.TestConstructor2Body })]
         public void TestExtractMethods(string source, int numExpectedMethods, int[] expectedMethodBodyLengths, string[] expectedMethodBodies)
         {
             var code = new Code(source.Split('\n'));

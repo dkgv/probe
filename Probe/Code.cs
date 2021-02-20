@@ -49,6 +49,7 @@ namespace Probe
             if (lineFrom == lineTo)
             {
                 Lines[lineFrom] = replacements[0];
+                return;
             }
 
             for (int i = lineFrom, j = 0; i < lineTo; i++, j++)
