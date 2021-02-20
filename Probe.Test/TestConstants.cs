@@ -42,7 +42,47 @@
                                                             + TestProperty2
                                                             + "\n"
                                                             + "}";
+        public const string TestClassShiftLineIndexing1 = "public class Constructor {\n"
+                                                            + TestConstructor3
+                                                            + "\n"
+                                                            + TestMethodWithNestedMethod
+                                                            + "\n"
+                                                            + "}";        
+        public const string TestClassShiftLineIndexing2 = "namespace Test\n"
+                                                          + "{\n" 
+                                                          + "public class Constructor {\n"
+                                                            + TestConstructor3
+                                                            + "\n"
+                                                            + TestMethodWithNestedMethod
+                                                            + "\n"
+                                                            + "}\n"
+                                                            + "}";
 
+        public const string TestClassShiftLineIndexing3 = @"
+            using System.Collections.Generic;
+
+            namespace Test
+            {
+                public class Constructor
+                {
+                    public readonly List<int> Ints = new List<int>();
+
+                    public void DoSomething()
+                    {
+                        Ints.ForEach(i =>
+                        {
+                            X(i);
+                        });
+                    }
+
+                    public void DoSomethingElse()
+                    {
+                        Ints.ForEach(i => Y(i));
+                        Ints.Clear();
+                    }
+                }
+            }";
+        
         public const string TestNamespaceAndClassWithSingleMethod = "namespace Test\n{\npublic class TestClass {\n"
             + TestMethodPrintBody
             + "}\n}\n";

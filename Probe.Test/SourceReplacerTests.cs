@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Linq;
+using NUnit.Framework;
 
 namespace Probe.Test
 {
@@ -78,6 +80,20 @@ namespace Probe.Test
 
             Assert.True(code.GetContent().Contains(TestConstants.TestProperty1));
             Assert.True(code.GetContent().Contains(TestConstants.TestProperty2));
+        }
+
+        [TestCase(TestConstants.TestClassShiftLineIndexing1, 3)]
+        [TestCase(TestConstants.TestClassShiftLineIndexing2, 4)]
+        [TestCase(TestConstants.TestClassShiftLineIndexing3, 4)]
+        public void TestClassConstructorAndMethodLineShifting(string source, int expectedBracketCount)
+        {
+            var lines = source.Split("\n");
+            var code = new Code(lines);
+
+            _replacer.Replace(code);
+
+            Assert.AreEqual(expectedBracketCount, code.GetContent().Count(ch => ch == '}'));
+            Assert.AreEqual(expectedBracketCount, code.GetContent().Count(ch => ch == '{'));
         }
 
         [Test]

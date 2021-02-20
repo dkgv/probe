@@ -65,11 +65,11 @@ namespace Probe
                 else
                 {
                     // Check if } was reached, potentially end of method
-                    if (currLine.EndsWith("}"))
+                    if (currLine.Contains("}"))
                     {
                         numOpenBrackets--;
                     }
-                    if (currLine.EndsWith("{"))
+                    if (currLine.Contains("{"))
                     {
                         numOpenBrackets++;
                     }
