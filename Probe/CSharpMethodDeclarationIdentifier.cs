@@ -11,7 +11,7 @@ namespace Probe
 
         private static readonly string[] AccessModifiers =
         {
-            "public", "private", "protected", "internal"
+            "public", "private", "protected", "internal", "static"
         };
 
         private static readonly string[] ClassTypes =
