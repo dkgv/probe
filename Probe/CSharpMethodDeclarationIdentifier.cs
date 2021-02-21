@@ -19,7 +19,7 @@ namespace Probe
             "class", "interface", "enum", "record"
         };
         
-        public MethodDeclaration TryFind(int lineIndex, Code code)
+        public MethodDeclaration TryFind(int lineIndex, RawCode code)
         {
             var currLine = code.Lines[lineIndex].Trim();
             if (string.IsNullOrEmpty(currLine))

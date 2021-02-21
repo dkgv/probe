@@ -2,6 +2,6 @@ namespace Probe
 {
     public interface IMethodDeclarationIdentifier
     {
-        MethodDeclaration TryFind(int index, Code code);
+        MethodDeclaration TryFind(int index, RawCode code);
     }
 }

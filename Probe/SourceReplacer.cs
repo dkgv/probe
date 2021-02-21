@@ -7,11 +7,12 @@ namespace Probe
 {
     public class SourceReplacer
     {
-        public SourceReplacer(IDependencyExtractor dependencyExtractor, IMethodExtractor methodExtractor, IEmitStrategy emitStrategy)
+        public SourceReplacer(IDependencyExtractor dependencyExtractor, IMethodExtractor methodExtractor, IEmitStrategy emitStrategy, IImportExtractor importExtractor)
         {
             DependencyExtractor = dependencyExtractor;
             MethodExtractor = methodExtractor;
             EmitStrategy = emitStrategy;
+            ImportExtractor = importExtractor;
         }
 
         public IDependencyExtractor DependencyExtractor { get; }
@@ -20,7 +21,9 @@ namespace Probe
 
         public IEmitStrategy EmitStrategy { get; }
 
-        public void Replace(Code code)
+        public IImportExtractor ImportExtractor { get; }
+
+        public void Replace(RawCode code)
         {
             var notImplementedEmitStrategy = new NotImplementedEmitStrategy();
 
@@ -72,6 +75,16 @@ namespace Probe
                 }
 
                 processed.Add(next.Signature);
+            }
+
+            // Ensure we have appropriate imports
+            var imports = ImportExtractor.Extract(code);
+            foreach (var import in notImplementedEmitStrategy.Imports)
+            {
+                if (!imports.Any(i => i.Import.Equals(import)))
+                {
+                    code.Lines.Insert(0, import);
+                }
             }
         }
     }

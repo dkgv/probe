@@ -21,7 +21,7 @@ namespace Probe
             {
                 Console.WriteLine($"Processing {entry}");
 
-                var code = new Code
+                var code = new RawCode
                 {
                     FilePath = entry,
                     Lines = File.ReadAllLines(entry).ToList()

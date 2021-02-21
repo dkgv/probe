@@ -4,15 +4,15 @@ using System.Text;
 
 namespace Probe
 {
-    public class Code
+    public class RawCode
     {
         private List<string> _lines;
 
-        public Code()
+        public RawCode()
         {
         }
 
-        public Code(IEnumerable<string> lines)
+        public RawCode(IEnumerable<string> lines)
         {
             Lines = lines.ToList();
         }

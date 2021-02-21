@@ -12,9 +12,11 @@ namespace Probe
                 return;
             }
 
+            var importExtractor = new CSharpImportExtractor();
             var dependencyExtractor = new CSharpDependencyExtractor();
             var methodExtractor = new CSharpMethodExtractor(new CSharpMethodDeclarationIdentifier());
-            var replacer = new SourceReplacer(dependencyExtractor, methodExtractor, new RemovedCommentEmitStrategy());
+            var removedCommentEmitStrategy = new RemovedCommentEmitStrategy();
+            var replacer = new SourceReplacer(dependencyExtractor, methodExtractor, removedCommentEmitStrategy, importExtractor);
 
             var projectProcessor = new ProjectProcessor(replacer);
             projectProcessor.Process(rootDirectory);

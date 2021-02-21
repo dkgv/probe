@@ -10,7 +10,7 @@ namespace Probe.Test
         [TestCase(TestConstants.TestInlineMethod, new[]{ "1;" })]
         public void TestInlineMethod(string source, string[] methodBodies)
         {
-            var code = new Code(source.Split("\n"));
+            var code = new RawCode(source.Split("\n"));
 
             Assert.AreEqual(MethodVariant.InlineMethod, Extractor.MethodDeclarationIdentifier.TryFind(0, code).Variant);
 
@@ -28,7 +28,7 @@ namespace Probe.Test
         [TestCase(TestConstants.TestNotInlineMethod2)]
         public void TestNotInlineMethod(string source)
         {
-            var code = new Code(source.Split("\n"));
+            var code = new RawCode(source.Split("\n"));
 
             var methodDeclaration = Extractor.MethodDeclarationIdentifier.TryFind(0, code);
             Assert.AreEqual(null, methodDeclaration);
@@ -38,7 +38,7 @@ namespace Probe.Test
         [TestCase(TestConstants.TestProperty2)]
         public void TestEnsureMethodNotProperty(string source)
         {
-            var code = new Code(source.Split("\n"));
+            var code = new RawCode(source.Split("\n"));
 
             var methodDeclaration = Extractor.MethodDeclarationIdentifier.TryFind(0, code);
             Assert.AreEqual(null, methodDeclaration);
@@ -56,7 +56,7 @@ namespace Probe.Test
         [TestCase(TestConstants.TestClassWithConstructor1And2, 2, new[]{1,6}, new[] {"", TestConstants.TestConstructor2Body })]
         public void TestExtractMethods(string source, int numExpectedMethods, int[] expectedMethodBodyLengths, string[] expectedMethodBodies)
         {
-            var code = new Code(source.Split('\n'));
+            var code = new RawCode(source.Split('\n'));
             var methods = Extractor.ExtractMethods(code).ToArray();
             
             Assert.AreEqual(numExpectedMethods, methods.Length);

@@ -12,7 +12,7 @@ namespace Probe
         
         public IMethodDeclarationIdentifier MethodDeclarationIdentifier { get; }
 
-        public IEnumerable<MethodDefinition> ExtractMethods(Code code)
+        public IEnumerable<MethodDefinition> ExtractMethods(RawCode code)
         {
             var numOpenBrackets = 0;
             MethodDefinition currMethodDef = null;

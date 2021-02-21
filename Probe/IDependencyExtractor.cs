@@ -4,6 +4,6 @@ namespace Probe
 {
     public interface IDependencyExtractor
     {
-        IEnumerable<string> ExtractDependencies(Code code);
+        IEnumerable<string> ExtractDependencies(RawCode code);
     }
 }

@@ -4,6 +4,6 @@ namespace Probe
 {
     public interface IMethodExtractor
     {
-        public IEnumerable<MethodDefinition> ExtractMethods(Code code);
+        public IEnumerable<MethodDefinition> ExtractMethods(RawCode code);
     }
 }
